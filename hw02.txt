@@ -1,0 +1,34 @@
+#include "SevSeg.h"
+
+SevSeg sevseg; //Initiate a seven segment controller object
+int Hour = 0, Min = 1, sw = 6;
+void setup() {
+  pinMode(sw, INPUT);
+  byte numDigits = 4;
+  byte digitPins[] = {2, 3, 4, 5};
+  byte segmentPins[] = { 8, 9, 10, 11, 12, 13, 14 , 15};
+  sevseg.begin(COMMON_CATHODE, numDigits, digitPins, segmentPins);
+  sevseg.setBrightness(90);
+}
+
+void loop() {
+  if (digitalRead(6) == HIGH)
+  {
+    Hour = 0;
+    Min = 0;
+  }
+  else
+  {
+    sevseg.setNumber(Hour * 100 + Min, 4);
+    Min = Min + 1;
+    if (Min == 60) {
+      Min = 0;
+      if (Hour == 23)
+        Hour = 0;
+      else
+        Hour++;
+    }
+  }
+  for (int i = 0; i < 1000000; i++)
+    sevseg.refreshDisplay(); // Must run repeatedly
+}
